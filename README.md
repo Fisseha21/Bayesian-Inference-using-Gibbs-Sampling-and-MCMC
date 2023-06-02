@@ -10,11 +10,8 @@ that $p$ has a Beta($\alpha$, $\beta$) prior distribution, $N|\lambda$ has a Poi
     
 3. Repeat the above estimation with loss function  
   
- <div align="center">
-    
- </div>
  
- <center> ${1 \over \theta} (\theta - d)^2$ </center>
+     <center> ${1 \over \theta} (\theta - d)^2$ </center>
  
   
 4. A second experiment consisting of independent Bernoulli trials was performed under different
