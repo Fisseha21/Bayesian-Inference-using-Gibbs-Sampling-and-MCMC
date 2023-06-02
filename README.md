@@ -1,8 +1,6 @@
 # Bayesian-Inference-using-Gibbs-sampling-and-MCMC
 
-An experiment consists of performing independent _Bernoulli_($p$) trials. Suppose the trials yield
-$Y$ successes , but the experimenter lost track of the number $N$ of the trials performed. Assume
-that $p$ has a _Beta_($\alpha$, $\beta$) prior distribution, $N|\lambda$ has a _Poisson_($\lambda$) prior distribution, and $\lambda$ has a Gamma($a$, $b$) hyperprior distribution.
+An experiment consists of performing independent _Bernoulli_($p$) trials. Suppose the trials yield $Y$ successes , but the experimenter lost track of the number $N$ of the trials performed. Assume that $p$ has a _Beta_($\alpha$, $\beta$) prior distribution, $N|\lambda$ has a _Poisson_($\lambda$) prior distribution, and $\lambda$ has a _Gamma_($a$, $b$) hyperprior distribution.
   
 1. Write down fully conditional distributions for $p$, $N$, and $\lambda$ and write an **R** code for implementing Gibbs sampling to compute the posterior distributions of these parameters.  
   
