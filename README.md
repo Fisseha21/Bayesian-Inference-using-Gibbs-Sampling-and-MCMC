@@ -11,7 +11,7 @@ that $p$ has a Beta($\alpha$, $\beta$) prior distribution, $N|\lambda$ has a Poi
 3. Repeat the above estimation with loss function  
   
 \centerline{$\frac{1}{\theta}(\theta - d)^2$}  
- $ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $
+ $ x = {-b \over 2a} $
   
 4. A second experiment consisting of independent Bernoulli trials was performed under different
 conditions. If $p^{0}\prime$ is the probability of success under these new conditions and $Y^{\prime} = 4$, but the experimenter again failed to record the number of trials, calculate the posterior probability that $p > \sqrt{p^{\prime}}$.
