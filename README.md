@@ -12,9 +12,9 @@ that $p$ has a Beta($\alpha$, $\beta$) prior distribution, $N|\lambda$ has a Poi
   
  <div align="center">
     
- </div>'
+ </div>
  
- ${1 \over \theta} (\theta - d)^2$
+ <center> ${1 \over \theta} (\theta - d)^2$ </center>
  
   
 4. A second experiment consisting of independent Bernoulli trials was performed under different
