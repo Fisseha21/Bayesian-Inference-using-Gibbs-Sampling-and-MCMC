@@ -4,7 +4,7 @@ An experiment consists of performing independent Bernoulli($p$) trials. Suppose 
 $Y$ successes , but the experimenter lost track of the number $N$ of the trials performed. Assume
 that $p$ has a Beta($\alpha$, $\beta$) prior distribution, $N|\lambda$ has a Poisson($\lambda$) prior distribution, and $\lambda$ has a Gamma($a$, $b$) hyperprior distribution.
   
-1. Write down fully conditional distributions for $p$, $N$, and $\lambda$ and write an \textbf{R} code for implementing Gibbs sampling to compute the posterior distributions of these parameters.  
+1. Write down fully conditional distributions for $p$, $N$, and $\lambda$ and write an **R** code for implementing Gibbs sampling to compute the posterior distributions of these parameters.  
   
 2. With $Y = 15$, $\alpha = .2$, $\beta = 4$, $a = .5$, $b = 2$, estimate these parameters using squared error loss function.    
     
