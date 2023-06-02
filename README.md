@@ -11,7 +11,7 @@ that $p$ has a Beta($\alpha$, $\beta$) prior distribution, $N|\lambda$ has a Poi
 3. Repeat the above estimation with loss function  
   
  <div align="center">
-    ${1 \over \theta} (\theta - d)^2$
+    {1 \over \theta} (\theta - d)^2
  </div>
  
   
