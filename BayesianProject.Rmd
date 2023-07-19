@@ -1,0 +1,491 @@
+---
+title: 'Spring ''21 Math 7/8680: Project 2'
+author: "Talha Chaudhry, Fisseha Ferede"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(pander)
+require(spate)
+set.seed(8680)
+```
+
+\usepackage[dvipsnames]{xcolor}
+\color{ForestGreen}
+## Introduction: The Problem
+
+This paper is a written report on the Project Problem assigned in Spring '21 Bayesian Inference and Statistics course at University of Memphis. The report is structured as follows: the Project problem is presented first, followed by solutions inlaid with R code. This report was prepared in \textbf{R}, and all the code has also been provided in the appendix. First, following is the text of the problem.  
+  
+An experiment consists of performing independent $Bernoulli$($p$) trials. Suppose the trials yield $Y$ successes , but the experimenter lost track of the number $N$ of the trials performed. Assume that $p$ has a $Beta$($\alpha$, $\beta$) prior distribution, $N|\lambda$ has a $Poisson$($\lambda$) prior distribution, and $\lambda$ has a $Gamma$($a$, $b$) hyperprior distribution.
+  
+1. Write down fully conditional distributions for $p$, $N$, and $\lambda$ and write an \textbf{R} code for implementing Gibbs sampling to compute the posterior distributions of these parameters.  
+  
+2. With $Y = 15$, $\alpha = .2$, $\beta = 4$, $a = .5$, $b = 2$, estimate these parameters using squared error loss function.    
+    
+3. Repeat the above estimation with loss function  
+
+\begin{align}
+\frac{1}{\theta}(\theta - d)^2
+\end{align}
+  
+  
+4. A second experiment consisting of independent Bernoulli trials was performed under different conditions. If $p^\prime$ is the probability of success under these new conditions and $Y^{\prime} = 4$, but the experimenter again failed to record the number of trials, calculate the posterior probability that $p > \sqrt{p^{\prime}}$.
+  
+  
+### Problem 1
+
+1. Write down fully conditional distributions for $p$, $N$, and $\lambda$ and write an \textbf{R} code for implementing Gibbs sampling to compute the posterior distributions of these parameters.  
+
+### Solution
+
+We have the following setup:  
+  
+Let $X_1, X_2,...,X_n$ be i.i.d ~ $Ber(p)$. Then, number of success, $Y = \overset{N}{\underset{i=1}{\sum}}X_i$ ~ $Bin(N, p)$. 
+
+Priors: $p$ ~ $Beta(\alpha, \beta)$; $N|\lambda$ ~ $Poisson(\lambda)$; $\lambda$ ~ $Gamma(a, b)$.
+  
+Let's start with the conditional density function of $(p, N, \lambda)$ given $Y$:
+
+  \begin{align}
+      \tau(p, \lambda, N | Y = y) \propto f(Y=y|N,p)\tau(p)\tau(N|\lambda)\tau(\lambda)\\
+      \propto {N \choose y} p^y(1-p)^{N-y} p^{\alpha -1}(1 - p)^{\beta - 1} \frac{\lambda^{N}e^{-\lambda}}{N!} \lambda^{a - 1} e^{-b \lambda}\\
+      = \frac{N}{(N - y)!y!} p^{y+\alpha -1} (1-p)^{N-y+\beta-1} \frac{\lambda^{N+\alpha-1}e^{-\lambda(b+1)}}{N!}\\
+      \propto \frac{1}{(N - y)!}p^{y+\alpha-1}(1-p)^{N-y+\beta-1} \lambda^{N+\alpha-1}e^{-\lambda(b+1)}
+  \end{align}
+  
+To compute the fully conditional posteriors of $N, p$ and $\lambda$, we consider only the terms involving that parameter and treat everything else as a constant. 
+
+So in case of $\color{Red}p$,  
+  
+\begin{aligned}
+   {\color{Red} {\tau(p|N,\lambda, Y = y)}} \propto p^y p^{\alpha - 1} (1 - p)^{N - y} (1 - p)^{\beta - 1} = p^{(y + \alpha) - 1} (1 - p)^{(N - y + \beta) - 1}\\
+   \sim Beta(y + \alpha, N - y + \beta)
+\end{aligned}
+  
+Moreover for $\color{Red}\lambda$,  
+
+\begin{aligned}
+   {\color{Red} {\tau(\lambda|p, N, Y = y)}} \propto \lambda^N \lambda^{a - 1} e^{-\lambda} e^{-b\lambda} = \lambda^{(N + a) - 1} e^{-(b + 1)\lambda}\\
+   \sim Gamma(N + a, b + 1)
+\end{aligned}
+
+And for $\color{Red}N$,  
+
+\begin{aligned}
+   {\color{Red} {\tau(N|p, \lambda, Y = y)}} \propto \frac{1}{(N - y)!}(1-p)^N\lambda^N\\
+   = \frac{(\lambda(1-p))^{N}}{(N - y)!}\\
+   \propto \frac{(\lambda(1-p))^{N-y}}{(N - y)!}e^{-\lambda(1-p)}\\
+   \sim Poisson(\lambda(1-p)) + y)
+\end{aligned}
+  
+
+Gibbs Sampling Process:  
+  
+1. Initialize $N^{(0)}$  
+
+2.  \begin{align}
+        1^{st}\; iteration \begin{cases}
+         p^{(1)} \;sampled \;from \; \sim Beta(\alpha + y, N^{(0)}+\beta-y)\\
+         \lambda^{(1)} \;sampled \;from \; \sim Gamma(N^{(0)} + a, b+1)\\
+         N^{(1)} \;sampled \;from \; \sim Poisson(\lambda^{(1)}(1-p^{(1)})) + y\\
+      \end{cases}
+    \end{align}
+
+3.  \begin{align}
+        k^{th}\;iteration\begin{cases}
+         p^{(k)} \;sampled \;from \; \sim Beta(\alpha + y, N^{(k-1)}+\beta-y)\\
+         \lambda^{(k)} \;sampled \;from \; \sim Gamma(N^{(k-1)} + a, b+1)\\
+         N^{(k)} \;sampled \;from \; \sim Poisson(\lambda^{(k)}(1-p^{(k)}))+y\\
+      \end{cases}
+    \end{align}
+
+\centerline{\vdots \vdots \vdots}  
+  
+Here's the \textbf{R} code for the Gibbs sampling process:  
+  
+```{r (a), eval=FALSE}  
+# It is assumed that Y, alpha, beta, a, and b are known
+# Letter 'l' refers to lambda
+
+k <- 20000 # total iterations
+T <- 10000 # burn in
+N <- N #initialize N
+my_mat <- matrix(data = (k*3)*NA, nrow = k, ncol = 3) # empty matrix
+colnames(my_mat) <-  c("p", "lambda", "N") # parameters as column names
+
+for (i in 1:k) {
+  p <- rbeta(1, shape1 = Y + alpha, shape2 = N - Y + beta) # sample p
+  l <- rgamma(1, shape = N + a, rate = b + 1) # sample lambda
+  N <- rpois(1, l*(1-p)) + Y # sample N
+  
+  my_mat[i, ] <- c(p,l,N) # fill the matrix row by row
+}
+```
+  
+### Problem 2  
+
+With $Y = 15$, $\alpha = .2$, $\beta = 4$, $a = .5$, $b = 2$, estimate these parameters using squared error loss function. 
+
+### Solution 
+Bayes estimator of parameter $\theta$, $d_{B_{\theta}}(y)$, with squared error loss function is the mean of the posterior distribution,
+
+\begin{align}
+ d_{B_{\theta}}(y) = E[\theta|Y=y]
+\end{align}
+
+The mean of this posterior distribution can be computed based on the law of large numbers, that is, given large number of samples $\theta^{(0)}, \theta^{(1)},...,\theta^{(s)}$ (obtained via Gibbs Sampling), the sample mean converges to the above expectation value:
+
+  \begin{align}
+     \frac{1}{S}\sum_{i=1}^{S}\theta^{(i)} \rightarrow E(\theta|Y=y)\\
+     d_{B_\theta}(y) = E(\theta|Y=y)\approx \frac{1}{S}\sum_{i=1}^{S}\theta^{(i)} 
+  \end{align}
+  
+In this experiment, we took $S=10,000$ number of samples from the Gibbs sampling process taken from 20,000 iterations followed by 10,000 burn-in periods. And computed the bayes estimate of parameter $N, \lambda$ and $p$ with squared error loss function as:
+
+  \begin{align}
+        d_{B_N}(y) \approx \frac{1}{S}\sum_{i=1}^{S}N^{(i)}\\
+        d_{B_\lambda}(y) \approx \frac{1}{S}\sum_{i=1}^{S}\lambda^{(i)}\\
+        d_{B_p}(y) \approx \frac{1}{S}\sum_{i=1}^{S}p^{(i)}
+  \end{align}
+  
+The results are as follows: 
+  
+```{r (b1), echo = TRUE}
+Y <- 15
+alpha <- 0.2
+beta <- 4
+a <- 0.5
+b <- 2
+
+s <- 20000
+T <- 10000 # burn in
+
+
+N <- 35 #Initialized N, N_0
+
+my_mat <- matrix(data = (s*3)*NA, nrow = s, ncol = 3)
+colnames(my_mat) <-  c("p", "lambda", "N")
+
+for (i in 1:s) {
+  p <- rbeta(1, shape1 = Y + alpha, shape2 = N - Y + beta)
+  l <- rgamma(1, shape = N + a, rate = b + 1)
+  N <- rpois(1, l*(1-p)) + Y
+  
+  
+  my_mat[i, ] <- c(p,l,N)
+
+}
+
+iter_p <- my_mat[, 1][-(1:T)]
+iter_l <- my_mat[, 2][-(1:T)]
+iter_N <- my_mat[, 3][-(1:T)]
+
+  
+pander(matrix(data = c(round(mean(iter_p), 3), round(mean(iter_l), 3), as.integer(mean(iter_N))),
+              nrow = 1, ncol = 3, dimnames = list("Bayes Estimate", c("p", "lambda", "N"))))
+```
+
+The trace plots are as follows:  
+
+```{r (b2), echo=TRUE}
+par(mfrow = c(3,1))
+trace.plot(t(my_mat), BurnIn = 10000)
+```
+ 
+A **trace plot** is a plot of the values of the random variable generated from a fully conditional distribution (via Gibbs Sampling) against the number of iterations. In other word, the trace plot \emph{traces} the values the random variable takes over the number of iterations when sampled. The nice form above suggests that convergence is acheived, and that too early on in the process. If the trace was all over thr graph that would suggest convergence most likely had not been acheived.
+  
+Histograms of the samples:
+  
+```{r b3, echo=TRUE}
+par(mfrow = c(1, 3))
+hist(iter_p, xlab = 'Samples', main = 'Histogram of p')
+hist(iter_l, xlab = 'Samples', main = 'Histogram of lambda')
+hist(iter_N, xlab = 'Samples', main = 'Histogram of N')
+```
+
+### Problem 3
+
+Repeat the above estimation with loss function  
+
+\begin{align}
+\frac{1}{\theta}(\theta - d)^2
+\end{align}
+
+### Solution
+
+Now given the weighted loss function, $\frac{1}{\theta}(\theta - d)^2$, we compute the Bayes estimator of parameter $\theta$, $d_{B_{\theta}}(y)$ as:
+
+   \begin{align}
+           d_{B_\theta}(y) = \frac{E(\theta w(\theta)|Y=y)}{E(w(\theta)|Y=y)},\; where\:  w(\theta) = \frac{1}{\theta}\\
+            = \frac{E(\theta \frac{1}{\theta}|Y=y)}{E(\frac{1}{\theta}|Y=y)}=\frac{E(1|Y=y)}{E(\frac{1}{\theta}|Y=y)} = \frac{1}{E(\frac{1}{\theta}|Y=y)}
+    \end{align}
+
+From Monte Carlo Approximation Method, given large number of samples $\theta^{(1)}, \theta^{(2)},..., \theta^{(s)}$ from posterior distribution $\tau(\theta|Y)$, we have:
+
+  \begin{align}
+           \frac{1}{S}\sum_{i=1}^{S}w(\theta^{(i)}) \rightarrow E(w(\theta)|Y=y)
+  \end{align}
+  
+  \begin{align}
+         E(w(\theta)|Y=y) = \begin{cases}
+         \int_{\Omega} w(\theta)\tau(\theta|Y)d\theta  \;\;  cont\;  \theta\\
+         \sum_{\theta \in \Omega} w(\theta)\tau(\theta|Y)\;\;  disc \;  \theta\\
+         \end{cases}\approx \frac{1}{S}\sum_{i=1}^{S}w(\theta^{(i)})
+   \end{align}
+
+$S=10,000$ number of samples are taken from the Gibbs sampling process with $20,000$ iterations followed by $10,000$ burn-in periods. We then computed the bayes estimate of parameter $N,\lambda$ and $p$ with weighted squared error loss function as:
+
+  \begin{align}
+      d_{B_N}(y) \approx \frac{1}{\frac{1}{S}\sum_{i=1}^{S}w(N^{(i)})}\\ 
+      d_{B_\lambda}(y) \approx \frac{1}{\frac{1}{S}\sum_{i=1}^{S}w(\lambda^{(i)})}\\
+      d_{B_p}(y) \approx \frac{1}{\frac{1}{S}\sum_{i=1}^{S}w(p^{(i)})} 
+  \end{align}
+
+The results are as follows: 
+```{r (c), echo=TRUE}
+samp_p <- c() # empty vector for p
+samp_l <- c() # empty vector for lambda
+samp_N <- c() # empty vector for N
+
+for (i in 1:1000) { # get lagged samples by 10
+  samp_p[i] <- iter_p[10*i] 
+  samp_l[i] <- iter_l[10*i]
+  samp_N[i] <- iter_N[10*i]
+}
+
+w_bayes <- function(theta){ # function for wighted loss estimates
+  1/(sum(1/theta)/length(theta))
+}
+
+w_p <- w_bayes(samp_p) # p
+w_l <- w_bayes(samp_l) # lambda
+w_N <- w_bayes(samp_N) # N
+
+pander(matrix(data = c(round(w_p, 3), round(w_l, 3), as.integer(w_N)),
+              nrow = 1, ncol = 3, dimnames = list("Weighted Bayes Estimate", c("p", "lambda", "N"))))
+```
+
+  
+The above result is expected. The weighted estimates are lower because the weight function gives "less weight" to higher values of the sample than lower values. However, the difference is not too large given the samples that were obtained.
+
+### Problem 4
+
+ A second experiment consisting of independent Bernoulli trials was performed under different conditions. If $p^\prime$ is the probability of success under these new conditions and $Y^{\prime} = 4$, but the experimenter again failed to record the number of trials, calculate the posterior probability that $p > \sqrt{p^{\prime}}$.
+
+### Solution
+The Gibbs sampling process is performed again in a similar experiment as part (1) under different conditions, $Y'=4$, number of successes and probability of success, $p'$.
+
+Here, we are interested in calculating posterior probabilty that $p > \sqrt{p^\prime}$. The Gibbs sampling process gives us new samples: $p'^{(1)}, p'^{(2)},..., p'^{(S)}$. Having $p^{(1)}, p^{(2)},..., p^{(S)}$ from part(1), we calculate:  
+
+  \begin{align}
+      P(p>\sqrt{p'}|Y=y, Y'=y')
+  \end{align}
+  
+From Monte Carlo Approximation, given samples of two estimates:  $p'^{(1)}, p'^{(2)},..., p'^{(S)}$ and $p^{(1)}, p^{(2)},..., p^{(S)}$, define a new variable as follows: 
+          
+  \begin{align}
+      I(p^{(i)} > \sqrt{p^{'(i)}}) = \begin{cases}
+      1 \;\;  p^{(i)} > \sqrt{p^{'(i)}} \\
+      0\;\;  Otherwise,\\
+      \end{cases}
+  \end{align}  
+Then the posterior probability that $p > \sqrt{p'}$ can be approximated as:
+    \begin{align}
+         P(p>\sqrt{p'}|Y=y, Y'=y') \approx \frac{1}{S}\sum_{i=1}^{S}I(p^{(i)} > \sqrt{p^{'(i)}})
+    \end{align}  
+
+$P(p>\sqrt{p'}|Y=y, Y'=y')$ is computed to be $\color{red}{0.635}$.  
+  
+```{r (d1), echo=TRUE}
+Y_prime <- 4
+
+N <- 10
+
+my_mat2 <- matrix(data = (s*3)*NA, nrow = s, ncol = 3)
+colnames(my_mat2) <-  c("p'", "lambda'", "N'")
+
+for (i in 1:s) {
+  p <- rbeta(1, shape1 = Y_prime + alpha, shape2 = N - Y_prime + beta)
+  l <- rgamma(1, shape = N + a, rate = b + 1)
+  N <- rpois(1, l*(1-p)) + Y_prime
+  
+  
+  my_mat2[i, ] <- c(p,l,N)
+  
+}
+
+
+iter_p2 <- my_mat2[, 1][-(1:T)]
+iter_l2 <- my_mat2[, 2][-(1:T)]
+iter_N2 <- my_mat2[, 3][-(1:T)]
+
+samp_p2 <- c()
+samp_l2 <- c()
+samp_N2 <- c()
+
+for (i in 1:1000) {
+  samp_p2[i] <- iter_p2[10*i]
+  samp_l2[i] <- iter_l2[10*i]
+  samp_N2[i] <- iter_N2[10*i]
+}
+
+I <- c()
+
+for (i in 1:1000) {
+  if(samp_p[i] > sqrt(samp_p2[i])){
+    I[i] <- 1
+  } else {
+    I[i] <- 0
+  }
+}
+
+prob <- sum(I)/length(I)
+
+print(paste("P=", prob))
+```
+  
+Therefore, using \textbf{R}, $P(p > \sqrt(p^{\prime}) | Y=y, Y^{\prime} = y^{\prime})$ is computed to be \textbf{`r prob`}.  
+  
+Following is the trace plot of the second Gibbs Sampling process. Like previously, convergence most likely is acheived and that too rather swiftly.    
+  
+```{r (d2), echo = FALSE}
+par(mfrow=c(3,1))
+trace.plot(t(my_mat2), BurnIn = 10000)
+```
+  
+Finally, the histograms:  
+  
+```{r d3, echo=FALSE}
+par(mfrow = c(1, 3))
+hist(iter_p2, xlab = 'Samples', main = 'Histogram of p`')
+hist(iter_l2, xlab = 'Samples', main = 'Histogram of lambda`')
+hist(iter_N2, xlab = 'Samples', main = 'Histogram of N`')
+```
+
+\newpage
+
+# Appendix: R Code
+
+```{r, eval=FALSE}
+# Part (b)
+Y <- 15
+alpha <- 0.2
+beta <- 4
+a <- 0.5
+b <- 2
+
+k <- 20000
+T <- 10000 # burn in
+
+
+N <- 35
+
+my_mat <- matrix(data = (k*3)*NA, nrow = k, ncol = 3)
+colnames(my_mat) <-  c("p", "lambda", "N")
+
+for (i in 1:k) {
+  p <- rbeta(1, shape1 = Y + alpha, shape2 = N - Y + beta)
+  l <- rgamma(1, shape = N + a, rate = b + 1)
+  N <- rpois(1, l*(1-p)) + Y
+  
+  
+  my_mat[i, ] <- c(p,l,N)
+
+}
+
+iter_p <- my_mat[, 1][-(1:T)]
+iter_l <- my_mat[, 2][-(1:T)]
+iter_N <- my_mat[, 3][-(1:T)]
+
+  
+pander(matrix(data = c(round(mean(iter_p), 3), round(mean(iter_l), 3), as.integer(mean(iter_N))),
+              nrow = 1, ncol = 3, dimnames = list("Bayes Estimate", c("p", "lambda", "N"))))
+
+par(mfrow = c(3,1))
+trace.plot(t(my_mat), BurnIn = 10000)
+
+par(mfrow = c(1, 3))
+hist(iter_p, xlab = 'Samples', main = 'Histogram of p')
+hist(iter_l, xlab = 'Samples', main = 'Histogram of l')
+hist(iter_N, xlab = 'Samples', main = 'Histogram of N')
+
+
+# Part (c)
+samp_p <- c() # empty vector for p
+samp_l <- c() # empty vector for lambda
+samp_N <- c() # empty vector for N
+
+for (i in 1:1000) { # get lagged samples by 10
+  samp_p[i] <- iter_p[10*i] 
+  samp_l[i] <- iter_l[10*i]
+  samp_N[i] <- iter_N[10*i]
+}
+
+w_bayes <- function(theta){ # function for wighted loss estimates
+  1/(sum(1/theta)/length(theta))
+}
+
+w_p <- w_bayes(samp_p) # p
+w_l <- w_bayes(samp_l) # lambda
+w_N <- w_bayes(samp_N) # N
+
+pander(matrix(data = c(round(w_p, 3), round(w_l, 3), as.integer(w_N)),
+              nrow = 1, ncol = 3, dimnames = list("Weighted Bayes Estimate", c("p", "lambda", "N"))))
+
+# Part (d)
+Y_prime <- 4
+
+N <- 10
+
+
+my_mat2 <- matrix(data = (k*3)*NA, nrow = k, ncol = 3)
+colnames(my_mat2) <-  c("p", "lambda", "N")
+
+for (i in 1:k) {
+  p <- rbeta(1, shape1 = Y_prime + alpha, shape2 = N - Y_prime + beta)
+  l <- rgamma(1, shape = N + a, rate = b + 1)
+  N <- rpois(1, l*(1-p)) + Y_prime
+  
+  
+  my_mat2[i, ] <- c(p,l,N)
+  
+}
+
+iter_p2 <- my_mat2[, 1][-(1:T)]
+iter_l2 <- my_mat2[, 2][-(1:T)]
+iter_N2 <- my_mat2[, 3][-(1:T)]
+
+samp_p2 <- c()
+samp_l2 <- c()
+samp_N2 <- c()
+
+for (i in 1:1000) {
+  samp_p2[i] <- iter_p2[10*i]
+  samp_l2[i] <- iter_l2[10*i]
+  samp_N2[i] <- iter_N2[10*i]
+}
+
+I <- c()
+
+
+for (i in 1:1000) {
+  if(samp_p[i] > sqrt(samp_p2[i])){
+    I[i] <- 1
+  } else {
+    I[i] <- 0
+  }
+}
+
+prob <- sum(I)/length(I)
+
+trace.plot(t(my_mat2), BurnIn = 10000)
+
+par(mfrow = c(1, 3))
+hist(iter_p2, xlab = 'Samples', main = 'Histogram of p`')
+hist(iter_l2, xlab = 'Samples', main = 'Histogram of lambda`')
+hist(iter_N2, xlab = 'Samples', main = 'Histogram of N`')
+```
