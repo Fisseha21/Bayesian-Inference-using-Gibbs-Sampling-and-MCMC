@@ -15,4 +15,4 @@ An experiment consists of performing independent _Bernoulli_($p$) trials. Suppos
 
 
 
-[Knitted File](https://fisseha21.github.io/Bayesian-Inference-using-Gibbs-sampling-and-MCMC/)
+[Knitted Markdown File](https://fisseha21.github.io/Bayesian-Inference-using-Gibbs-sampling-and-MCMC/)
