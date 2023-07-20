@@ -13,5 +13,6 @@ An experiment consists of performing independent _Bernoulli_($p$) trials. Suppos
   
 4. A second experiment consisting of independent _Bernoulli_ trials was performed under different conditions. If $p^{\prime}$ is the probability of success under these new conditions and $Y^{\prime} = 4$, but the experimenter again failed to record the number of trials, calculate the posterior probability that $p > \sqrt{p^{\prime}}$.
 
-https://fisseha21.github.io/Bayesian-Inference-using-Gibbs-sampling-and-MCMC/
-\href{http://sintel.is.tue.mpg.de/results}{Sintel Leaderboard}
+
+
+[Knitted File]([https://arxiv.org/pdf/2003.12039.pdf](https://fisseha21.github.io/Bayesian-Inference-using-Gibbs-sampling-and-MCMC/))<br/>
