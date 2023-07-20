@@ -12,3 +12,7 @@ An experiment consists of performing independent _Bernoulli_($p$) trials. Suppos
      <center> ${1 \over \theta} (\theta - d)^2$ </center>
   
 4. A second experiment consisting of independent _Bernoulli_ trials was performed under different conditions. If $p^{\prime}$ is the probability of success under these new conditions and $Y^{\prime} = 4$, but the experimenter again failed to record the number of trials, calculate the posterior probability that $p > \sqrt{p^{\prime}}$.
+
+
+
+Click here for [Knitted Markdown File](https://fisseha21.github.io/Bayesian-Inference-using-Gibbs-Sampling-and-MCMC/)
