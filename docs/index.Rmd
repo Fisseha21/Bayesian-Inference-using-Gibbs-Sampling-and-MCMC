@@ -53,7 +53,7 @@ Let's start with the conditional density function of $(p, N, \lambda)$ given $Y$
   \begin{align}
       \tau(p, \lambda, N | Y = y) \propto f(Y=y|N,p)\tau(p)\tau(N|\lambda)\tau(\lambda)\\
       \propto {N \choose y} p^y(1-p)^{N-y} p^{\alpha -1}(1 - p)^{\beta - 1} \frac{\lambda^{N}e^{-\lambda}}{N!} \lambda^{a - 1} e^{-b \lambda}\\
-      = \frac{N}{(N - y)!y!} p^{y+\alpha -1} (1-p)^{N-y+\beta-1} \frac{\lambda^{N+\alpha-1}e^{-\lambda(b+1)}}{N!}\\
+      = \frac{N!}{(N - y)!y!} p^{y+\alpha -1} (1-p)^{N-y+\beta-1} \frac{\lambda^{N+\alpha-1}e^{-\lambda(b+1)}}{N!}\\
       \propto \frac{1}{(N - y)!}p^{y+\alpha-1}(1-p)^{N-y+\beta-1} \lambda^{N+\alpha-1}e^{-\lambda(b+1)}
   \end{align}
   
@@ -279,7 +279,7 @@ The above result is expected. The weighted estimates are lower because the weigh
 ### Solution
 The Gibbs sampling process is performed again in a similar experiment as part (1) under different conditions, $Y'=4$, number of successes and probability of success, $p'$.
 
-Here, we are interested in calculating posterior probabilty that $p > \sqrt{p^\prime}$. The Gibbs sampling process gives us new samples: $p'^{(1)}, p'^{(2)},..., p'^{(S)}$. Having $p^{(1)}, p^{(2)},..., p^{(S)}$ from part(1), we calculate:  
+Here, we are interested in calculating posterior probability that $p > \sqrt{p^\prime}$. The Gibbs sampling process gives us new samples: $p'^{(1)}, p'^{(2)},..., p'^{(S)}$. Having $p^{(1)}, p^{(2)},..., p^{(S)}$ from part(1), we calculate:  
 
   \begin{align}
       P(p>\sqrt{p'}|Y=y, Y'=y')

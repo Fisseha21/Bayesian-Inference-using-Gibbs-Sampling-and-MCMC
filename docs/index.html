@@ -1685,7 +1685,7 @@ these parameters.</li>
 f(Y=y|N,p)\tau(p)\tau(N|\lambda)\tau(\lambda)\\
       \propto {N \choose y} p^y(1-p)^{N-y} p^{\alpha -1}(1 - p)^{\beta -
 1} \frac{\lambda^{N}e^{-\lambda}}{N!} \lambda^{a - 1} e^{-b \lambda}\\
-      = \frac{N}{(N - y)!y!} p^{y+\alpha -1} (1-p)^{N-y+\beta-1}
+      = \frac{N!}{(N - y)!y!} p^{y+\alpha -1} (1-p)^{N-y+\beta-1}
 \frac{\lambda^{N+\alpha-1}e^{-\lambda(b+1)}}{N!}\\
       \propto \frac{1}{(N - y)!}p^{y+\alpha-1}(1-p)^{N-y+\beta-1}
 \lambda^{N+\alpha-1}e^{-\lambda(b+1)}
@@ -1969,7 +1969,7 @@ trials, calculate the posterior probability that <span class="math inline">\(p &
 <p>The Gibbs sampling process is performed again in a similar experiment
 as part (1) under different conditions, <span class="math inline">\(Y&#39;=4\)</span>, number of successes and
 probability of success, <span class="math inline">\(p&#39;\)</span>.</p>
-<p>Here, we are interested in calculating posterior probabilty that
+<p>Here, we are interested in calculating posterior probability that
 <span class="math inline">\(p &gt; \sqrt{p^\prime}\)</span>. The Gibbs
 sampling process gives us new samples: <span class="math inline">\(p&#39;^{(1)}, p&#39;^{(2)},...,
 p&#39;^{(S)}\)</span>. Having <span class="math inline">\(p^{(1)},
