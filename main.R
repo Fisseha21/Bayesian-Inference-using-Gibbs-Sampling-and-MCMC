@@ -113,4 +113,3 @@ par(mfrow = c(1, 3))
 hist(iter_p2, xlab = 'Samples', main = 'Histogram of p`')
 hist(iter_l2, xlab = 'Samples', main = 'Histogram of lambda`')
 hist(iter_N2, xlab = 'Samples', main = 'Histogram of N`')
-
